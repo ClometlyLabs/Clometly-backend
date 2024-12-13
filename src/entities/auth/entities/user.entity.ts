@@ -25,10 +25,10 @@ export class User {
   @Column({ type: 'text' })
   password: string;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: false })
   verified: boolean;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: false })
   banned: boolean;
 
   @Column({ type: 'text' })

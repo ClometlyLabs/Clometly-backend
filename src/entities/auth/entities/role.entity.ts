@@ -1,5 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  BeforeInsert,
+} from 'typeorm';
 import { User } from './user.entity';
+import { ValidRoles } from '../interface/ValidRoles';
 
 @Entity({ name: 'roles' })
 export class Role {
@@ -7,8 +14,15 @@ export class Role {
   id: string;
 
   @Column({ unique: true, type: 'text' })
-  name: string;
+  name: ValidRoles;
 
   @OneToMany(() => User, (user) => user.role)
   users: User[];
+
+  @BeforeInsert()
+  checkValidRole() {
+    if (!Object.values(ValidRoles).includes(this.name)) {
+      throw new Error(`Invalid role: ${this.name}`);
+    }
+  }
 }

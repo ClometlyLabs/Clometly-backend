@@ -1,26 +1,51 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-user.dto';
-import { UpdateAuthDto } from './dto/update-user.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+
+import { User, Role } from './entities';
+import { CreateUserDto, CreateProfileDto, UpdateUserDto } from './dto';
+import { Profile } from '../profile/entities/profile.entity';
+
+import { generateRandomCode } from './shared/utils/string-utils';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
+    @InjectRepository(Profile)
+    private profileRepository: Repository<Profile>,
+  ) {}
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async create(
+    createUserDto: CreateUserDto,
+    createProfileDto: CreateProfileDto,
+  ) {
+    try {
+      const role = await this.roleRepository.findOne({
+        where: { name: createUserDto.role },
+      });
+      const user = this.userRepository.create({
+        ...createUserDto,
+        role,
+        code: generateRandomCode(6),
+      });
+      await this.userRepository.save(user);
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+      const profile = this.profileRepository.create({
+        ...createProfileDto,
+        user,
+      });
+      await this.profileRepository.save(profile);
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+      return { user, profile };
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(error);
+    }
   }
 }

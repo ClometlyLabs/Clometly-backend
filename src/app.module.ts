@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './entities/auth/auth.module';
 import { ProfileModule } from './entities/profile/profile.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ProfileModule } from './entities/profile/profile.module';
     }),
     AuthModule,
     ProfileModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
