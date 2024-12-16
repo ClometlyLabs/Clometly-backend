@@ -6,7 +6,6 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { Role } from './role.entity';
 import { Profile } from 'src/entities/profile/entities/profile.entity';
 
 @Entity({ name: 'users' })
@@ -31,9 +30,6 @@ export class User {
 
   @Column({ type: 'text' })
   code: string;
-
-  @ManyToOne(() => Role, (role) => role.users)
-  role: Role;
 
   @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;

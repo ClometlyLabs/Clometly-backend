@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { User, Role } from './entities';
+import { User } from './entities';
 import { CreateUserDto, CreateProfileDto, UpdateUserDto } from './dto';
 import { Profile } from '../profile/entities/profile.entity';
 
@@ -15,8 +15,7 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    @InjectRepository(Role)
-    private roleRepository: Repository<Role>,
+
     @InjectRepository(Profile)
     private profileRepository: Repository<Profile>,
   ) {}
@@ -25,18 +24,8 @@ export class AuthService {
     createProfileDto: CreateProfileDto,
   ) {
     try {
-      // Buscar el rol correspondiente
-      const role = await this.roleRepository.findOne({
-        where: { name: createUserDto.role },
-      });
-
-      if (!role) {
-        throw new BadRequestException('Role not found');
-      }
-
       const user = this.userRepository.create({
         ...createUserDto,
-        role,
         code: generateRandomCode(6),
         password: await bcrypt.hash(createUserDto.password, 10),
       });

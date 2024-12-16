@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
+
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Role } from 'src/entities/auth/entities';
-import { ValidRoles } from 'src/entities/auth/interface/ValidRoles';
-
+import { roles } from 'src/entities/roles/data/roles';
+import { Role } from 'src/entities/roles/entities/roles.entity';
 @Injectable()
 export class SeedService {
   constructor(
@@ -13,9 +13,13 @@ export class SeedService {
   ) {}
 
   async roleSeed() {
-    await this.roleRepository.delete({});
-    const roles = Object.values(ValidRoles).map((role) => ({ name: role }));
-    await this.roleRepository.save(roles);
-    return roles;
+    roles.forEach(async (role) => {
+      if (role) await this.roleRepository.delete({ name: role.name });
+      this.roleRepository.insert({
+        name: role.name,
+        context: role.context,
+        description: role.description,
+      });
+    });
   }
 }

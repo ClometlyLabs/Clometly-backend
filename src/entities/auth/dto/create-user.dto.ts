@@ -9,15 +9,8 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { ValidRoles } from '../interface/ValidRoles';
 
 export class CreateUserDto {
-  // @IsString()
-  // first_names: string;
-
-  // @IsString()
-  // last_names: string;
-
   @IsNotEmpty()
   @IsString({ message: 'Username must be a string' })
   @MaxLength(20, { message: 'Username must be less than 20  characters' })
@@ -29,7 +22,8 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
-  role: ValidRoles;
+  @IsIn(['ADMIN', '', ''], { message: 'Role must be admin or user' })
+  role: string;
 
   @IsNotEmpty()
   @IsString()
