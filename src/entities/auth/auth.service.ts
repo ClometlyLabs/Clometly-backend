@@ -20,32 +20,44 @@ export class AuthService {
     @InjectRepository(Profile)
     private profileRepository: Repository<Profile>,
   ) {}
-
   async create(
     createUserDto: CreateUserDto,
     createProfileDto: CreateProfileDto,
   ) {
     try {
+      // Buscar el rol correspondiente
       const role = await this.roleRepository.findOne({
         where: { name: createUserDto.role },
       });
+
+      if (!role) {
+        throw new BadRequestException('Role not found');
+      }
+
       const user = this.userRepository.create({
         ...createUserDto,
         role,
         code: generateRandomCode(6),
+        password: await bcrypt.hash(createUserDto.password, 10),
       });
+
       await this.userRepository.save(user);
 
       const profile = this.profileRepository.create({
         ...createProfileDto,
         user,
       });
+
       await this.profileRepository.save(profile);
 
-      return { user, profile };
+      return { user };
     } catch (error) {
-      console.log(error);
-      throw new BadRequestException(error);
+      console.error(error);
+      throw new BadRequestException(error.message || 'Failed to create user');
     }
+  }
+
+  async getUsers() {
+    return await this.userRepository.find({ relations: ['role', 'profile'] });
   }
 }

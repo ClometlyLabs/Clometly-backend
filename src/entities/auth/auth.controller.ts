@@ -21,4 +21,9 @@ export class AuthController {
   ) {
     return await this.authService.create(createUserDto, createProfileDto);
   }
+
+  @Get('users')
+  async getUsers() {
+    return await this.authService.getUsers();
+  }
 }

@@ -12,6 +12,10 @@ export class Profile {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @OneToOne(() => User, (user) => user.profile)
+  @JoinColumn()
+  user: User;
+
   @Column({ type: 'text' })
   first_names: string;
 
@@ -36,7 +40,7 @@ export class Profile {
   @Column({
     type: 'text',
     default:
-      'https://www.beautylabinternational.com/wp-content/uploads/2020/03/Hero-Banner-Placeholder-Light-1024x480-1.png',
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png',
   })
   profile_pic: string;
 
@@ -61,8 +65,4 @@ export class Profile {
 
   @Column({ type: 'text', nullable: true })
   github_link: string;
-
-  @OneToOne(() => User)
-  @JoinColumn()
-  user: User;
 }

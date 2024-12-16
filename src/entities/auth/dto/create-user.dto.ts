@@ -1,4 +1,14 @@
-import { IsEmail, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsEmail,
+  IsIn,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 import { ValidRoles } from '../interface/ValidRoles';
 
 export class CreateUserDto {
@@ -33,4 +43,44 @@ export class CreateProfileDto {
 
   @IsString()
   last_names: string;
+
+  @IsOptional()
+  @IsInt()
+  age?: number;
+
+  @IsOptional()
+  @IsDateString()
+  birthdate?: Date;
+
+  @IsOptional()
+  @IsInt()
+  dni?: number;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  private?: boolean;
+
+  @IsOptional()
+  @IsString()
+  instagram_link?: string;
+
+  @IsOptional()
+  @IsString()
+  facebook_link?: string;
+
+  @IsOptional()
+  @IsString()
+  twitter_link?: string;
+
+  @IsOptional()
+  @IsString()
+  linkedin_link?: string;
+
+  @IsOptional()
+  @IsString()
+  github_link?: string;
 }

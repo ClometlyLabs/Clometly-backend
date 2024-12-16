@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Role } from './role.entity';
 import { Profile } from 'src/entities/profile/entities/profile.entity';
@@ -12,9 +13,6 @@ import { Profile } from 'src/entities/profile/entities/profile.entity';
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @OneToOne(() => Profile, (profile) => profile.user)
-  profile: Profile;
 
   @Column({ unique: true, type: 'text' })
   email: string;
@@ -36,4 +34,7 @@ export class User {
 
   @ManyToOne(() => Role, (role) => role.users)
   role: Role;
+
+  @OneToOne(() => Profile, (profile) => profile.user)
+  profile: Profile;
 }
