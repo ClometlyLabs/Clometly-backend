@@ -8,7 +8,9 @@ import {
   Delete,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
+
 import { CreateProfileDto, CreateUserDto, UpdateUserDto } from './dto';
+import { CreateUserRoleDto } from '../roles/dto/create-role-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -18,8 +20,13 @@ export class AuthController {
   async create(
     @Body() createUserDto: CreateUserDto,
     @Body() createProfileDto: CreateProfileDto,
+    @Body() createUserRoleDto: CreateUserRoleDto,
   ) {
-    return await this.authService.create(createUserDto, createProfileDto);
+    return await this.authService.create(
+      createUserDto,
+      createProfileDto,
+      createUserRoleDto,
+    );
   }
 
   @Get('users')

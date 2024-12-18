@@ -9,7 +9,7 @@ import {
 import { User } from 'src/entities/auth/entities';
 import { Role } from './roles.entity';
 
-@Entity('users_roles')
+@Entity('permissions')
 export class UserRole {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -22,6 +22,6 @@ export class UserRole {
   @JoinColumn({ name: 'role_id' })
   role: Role;
 
-  @Column({ nullable: true }) // entity_id es opcional
+  @Column({ nullable: true })
   entity_id: string;
 }
