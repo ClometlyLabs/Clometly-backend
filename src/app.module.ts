@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { SeedModule } from './seed/seed.module';
 import { AuthModule } from './entities/auth/auth.module';
 import { ProfileModule } from './entities/profile/profile.module';
-import { SeedModule } from './seed/seed.module';
 import { RolesModule } from './entities/roles/roles.module';
+
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [

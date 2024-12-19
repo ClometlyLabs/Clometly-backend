@@ -1,16 +1,8 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpCode } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
-import { CreateProfileDto, CreateUserDto, UpdateUserDto } from './dto';
-import { CreateUserRoleDto } from '../roles/dto/create-role-user.dto';
+import { CreateUserDto, LoginUserDto } from './dto';
+import { CreateProfileDto } from '../profile/dto';
 
 @Controller('auth')
 export class AuthController {
@@ -20,17 +12,18 @@ export class AuthController {
   async create(
     @Body() createUserDto: CreateUserDto,
     @Body() createProfileDto: CreateProfileDto,
-    @Body() createUserRoleDto: CreateUserRoleDto,
   ) {
-    return await this.authService.create(
-      createUserDto,
-      createProfileDto,
-      createUserRoleDto,
-    );
+    return await this.authService.create(createUserDto, createProfileDto);
+  }
+
+  @Post('signin')
+  @HttpCode(200)
+  async login(@Body() loginUserDto: LoginUserDto) {
+    return await this.authService.login(loginUserDto);
   }
 
   @Get('users')
   async getUsers() {
-    return await this.authService.getUsers();
+    return 'all users';
   }
 }

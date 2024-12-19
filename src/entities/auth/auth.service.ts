@@ -1,91 +1,92 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository, DataSource } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import { DataSource, Repository } from 'typeorm';
+import { compare } from 'bcrypt';
 
 import { User } from './entities';
-import { CreateUserDto, CreateProfileDto, UpdateUserDto } from './dto';
-
-import { generateRandomCode } from './shared/utils/string-utils';
 import { Role, UserRole } from '../roles/entities';
 
-import { Profile } from '../profile/entities/profile.entity';
-import { CreateUserRoleDto } from '../roles/dto/create-role-user.dto';
+import { CreateUserDto, LoginUserDto } from './dto';
+import { CreateProfileDto } from '../profile/dto';
+
+import { validateUserUniqueness, createUser } from './shared/utils/user-utils';
+import { assignUserRole } from '../roles/shared/utils/roles-utils';
+import { generateToken } from './shared/utils/jwt/token-utils';
+
+import { ProfileService } from '../profile/profile.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
-
-    @InjectRepository(Profile)
-    private profileRepository: Repository<Profile>,
-
+    private readonly userRepository: Repository<User>,
     @InjectRepository(Role)
-    private roleRepository: Repository<Role>,
-
+    private readonly roleRepository: Repository<Role>,
     @InjectRepository(UserRole)
-    private userRoleRepository: Repository<UserRole>,
+    private readonly userRoleRepository: Repository<UserRole>,
 
+    private readonly profileService: ProfileService,
     private readonly dataSource: DataSource,
+    private readonly jwtService: JwtService,
   ) {}
   async create(
     createUserDto: CreateUserDto,
     createProfileDto: CreateProfileDto,
-    createUserRoleDto: CreateUserRoleDto,
   ) {
     const queryRunner = this.dataSource.createQueryRunner();
-
     await queryRunner.connect();
     await queryRunner.startTransaction();
+
     try {
-      const user = this.userRepository.create({
-        ...createUserDto,
-        code: generateRandomCode(6),
-        password: await bcrypt.hash(createUserDto.password, 10),
-      });
-      await this.userRepository.save(user);
+      const { email, username } = createUserDto;
+      await validateUserUniqueness(this.userRepository, email, username);
 
-      const profile = this.profileRepository.create({
-        ...createProfileDto,
+      const user = await createUser(
+        this.userRepository,
+        queryRunner,
+        createUserDto,
+      );
+      await this.profileService.createProfile(
+        queryRunner,
+        createProfileDto,
         user,
-      });
-      await this.profileRepository.save(profile);
-
-      const role = await this.roleRepository.findOne({
-        where: {
-          name: createUserDto.role,
-          context: 'platform',
-        },
-      });
-      const userRole = this.userRoleRepository.create({
-        role,
+      );
+      await assignUserRole(
+        this.roleRepository,
+        this.userRoleRepository,
+        queryRunner,
+        createUserDto.role,
         user,
-      });
-      await this.userRoleRepository.save(userRole);
+      );
 
-      return {
-        user: user,
-        profile: profile,
-        role: role,
-        userRole: userRole,
-      };
+      const token = generateToken(this.jwtService, user.id, user.email);
+      await queryRunner.commitTransaction();
+
+      return { user, token };
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      console.error(error);
-      throw new BadRequestException(error.message || 'Failed to create user');
+      throw error;
     } finally {
       await queryRunner.release();
     }
   }
 
-  async getUsers() {
-    const users = await this.userRepository.find({
-      loadRelationIds: true,
-      relations: ['profile'],
-    });
-    console.log(users);
-    return users;
+  async login(loginUserDto: LoginUserDto) {
+    const { email, password } = loginUserDto;
+
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+
+    const valid = await compare(password, user.password);
+    if (!valid) throw new ForbiddenException('Contraseña incorrecta');
+
+    const token = generateToken(this.jwtService, user.id, user.email);
+    return { acces_token: token };
   }
 }

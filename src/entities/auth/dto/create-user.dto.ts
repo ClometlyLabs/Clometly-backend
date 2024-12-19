@@ -1,9 +1,6 @@
 import {
-  IsBoolean,
-  IsDateString,
   IsEmail,
   IsIn,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -11,72 +8,25 @@ import {
 } from 'class-validator';
 
 export class CreateUserDto {
-  @IsNotEmpty()
-  @IsString({ message: 'Username must be a string' })
-  @MaxLength(20, { message: 'Username must be less than 20  characters' })
+  @IsNotEmpty({ message: 'El nombre de usuario es obligatorio' })
+  @IsString({ message: 'El nombre de usuario debe ser un texto' })
+  @MaxLength(20, {
+    message: 'El nombre de usuario debe ser menor de 20 digitos',
+  })
   username: string;
 
-  @IsNotEmpty()
-  @IsEmail()
+  @IsNotEmpty({ message: 'El email es obligatorio' })
+  @IsEmail({}, { message: 'Ingrese un email válido' })
   email: string;
 
-  @IsNotEmpty()
-  @IsString()
+  @IsOptional()
+  @IsString({ message: 'El rol debe ser un texto' })
   @IsIn(['ADMIN', 'MOD', 'USER'], {
-    message: 'Role must be ADMIN, MOD, USER',
+    message: 'El rol debe ser ADMIN, MOD o USER',
   })
   role: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(20, { message: 'Password must be less than 20 characters' })
+  @IsNotEmpty({ message: 'La contraseña es obligatoria' })
+  @MaxLength(20, { message: 'La contraseña es de maximo de 20 digitos' })
   password: string;
-}
-
-export class CreateProfileDto {
-  @IsString()
-  first_names: string;
-
-  @IsString()
-  last_names: string;
-
-  @IsOptional()
-  @IsInt()
-  age?: number;
-
-  @IsOptional()
-  @IsDateString()
-  birthdate?: Date;
-
-  @IsOptional()
-  @IsInt()
-  dni?: number;
-
-  @IsOptional()
-  @IsString()
-  description?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  private?: boolean;
-
-  @IsOptional()
-  @IsString()
-  instagram_link?: string;
-
-  @IsOptional()
-  @IsString()
-  facebook_link?: string;
-
-  @IsOptional()
-  @IsString()
-  twitter_link?: string;
-
-  @IsOptional()
-  @IsString()
-  linkedin_link?: string;
-
-  @IsOptional()
-  @IsString()
-  github_link?: string;
 }
