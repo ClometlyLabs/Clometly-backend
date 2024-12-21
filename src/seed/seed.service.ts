@@ -21,5 +21,6 @@ export class SeedService {
         description: role.description,
       });
     });
+    return 'Roles sembrados';
   }
 }

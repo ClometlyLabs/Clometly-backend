@@ -5,7 +5,7 @@ import * as dotenv from 'dotenv';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  dotenv.config(); // Cargar variables de entorno
+  dotenv.config();
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(process.env.PORT);
 }
