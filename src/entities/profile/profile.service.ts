@@ -19,6 +19,7 @@ export class ProfileService {
   ): Promise<Profile> {
     const profile = this.profileRepository.create({
       ...createProfileDto,
+      phone: createProfileDto.phone.toString(),
       user,
     });
 

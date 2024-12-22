@@ -20,9 +20,8 @@ export class CreateUserDto {
   email: string;
 
   @IsOptional()
-  @IsString({ message: 'El rol debe ser un texto' })
   @IsIn(['ADMIN', 'MOD', 'USER'], {
-    message: 'El rol debe ser ADMIN, MOD o USER',
+    message: 'Seleccione un rol válido',
   })
   role: string;
 

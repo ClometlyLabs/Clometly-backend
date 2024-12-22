@@ -34,6 +34,9 @@ export class Profile {
   @Column({ type: 'text', nullable: true })
   description: string;
 
+  @Column({ type: 'text', nullable: true })
+  phone: string;
+
   @Column({ type: 'boolean', default: false })
   private: boolean;
 
