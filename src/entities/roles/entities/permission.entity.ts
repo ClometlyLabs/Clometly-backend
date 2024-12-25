@@ -10,7 +10,7 @@ import { User } from 'src/entities/auth/entities';
 import { Role } from './roles.entity';
 
 @Entity('permissions')
-export class UserRole {
+export class Permission {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

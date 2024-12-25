@@ -1,12 +1,12 @@
 import { NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { Role, UserRole } from '../../entities';
+import { Role, Permission } from '../../entities';
 import { User } from 'src/entities/auth/entities';
 
-export async function assignUserRole(
+export async function assignPermission(
   roleRepository: Repository<Role>,
-  userRoleRepository: Repository<UserRole>,
+  permissionRepository: Repository<Permission>,
   queryRunner: any,
   name: string,
   user: User,
@@ -18,11 +18,11 @@ export async function assignUserRole(
     throw new NotFoundException(`Rol '${name}' no encontrado.`);
   }
 
-  const userRole = userRoleRepository.create({
+  const permission = permissionRepository.create({
     user,
     role,
     entity_id: null,
   });
 
-  await queryRunner.manager.save(userRole);
+  await queryRunner.manager.save(permission);
 }

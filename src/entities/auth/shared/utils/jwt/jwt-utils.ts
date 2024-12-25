@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 export function generateToken(
   jwtService: JwtService,
   userId: string,
-  email: string,
+  profileId: string,
 ): string {
-  return jwtService.sign({ id: userId, email });
+  return jwtService.sign({ userId, profileId });
 }

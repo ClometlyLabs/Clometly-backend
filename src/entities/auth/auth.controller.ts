@@ -1,8 +1,18 @@
-import { Controller, Get, Post, Body, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  HttpCode,
+  Param,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 import { CreateUserDto, LoginUserDto } from './dto';
 import { CreateProfileDto } from '../profile/dto';
+import { AuthGuard } from './guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -13,7 +23,7 @@ export class AuthController {
     @Body() createUserDto: CreateUserDto,
     @Body() createProfileDto: CreateProfileDto,
   ) {
-    return await this.authService.create(createUserDto, createProfileDto);
+    return await this.authService.register(createUserDto, createProfileDto);
   }
 
   @Post('signin')
@@ -23,7 +33,19 @@ export class AuthController {
   }
 
   @Get('users')
-  async getUsers() {
-    return 'all users';
+  @UseGuards(AuthGuard)
+  async getUsers(@Req() req: Request) {
+    return { message: 'Ruta protegida' };
+  }
+
+  @Post('users/:id')
+  async deleteUser(@Param('id') id: string) {
+    return this.authService.deleteUser(id);
+  }
+
+  @Get('profile')
+  @UseGuards(AuthGuard)
+  async getProfile(@Req() req: any) {
+    return { message: 'Ruta protegida', user: req.user };
   }
 }

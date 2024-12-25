@@ -8,29 +8,31 @@ import { User } from './entities';
 import { ProfileModule } from '../profile/profile.module';
 import { RolesModule } from '../roles/roles.module';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants/jwt.constants';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  controllers: [AuthController],
-  providers: [AuthService],
   imports: [
+    TypeOrmModule.forFeature([User]),
+    PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         return {
-          secret: configService.get('JWT_SECRET') || 'secretKey',
+          secret: process.env.JWT_SECRET_KEY || 'secretKey',
           signOptions: {
-            expiresIn: configService.get('JWT_EXPIRES_IN') || '60s',
+            expiresIn: process.env.JWT_EXPIRES_IN || '60s',
           },
         };
       },
     }),
-    TypeOrmModule.forFeature([User]),
     forwardRef(() => ProfileModule),
     forwardRef(() => RolesModule),
+    ConfigModule,
   ],
+  controllers: [AuthController],
+  providers: [AuthService],
   exports: [TypeOrmModule],
 })
 export class AuthModule {}

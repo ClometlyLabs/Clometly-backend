@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { User } from '../auth/entities';
-import { Role, UserRole } from './entities';
+import { Role, Permission } from './entities';
 
-import { CreateUserRoleDto } from './dto/create-role-user.dto';
+import { CreatePermissionDto } from './dto/create-permission.dto';
 
 export class RolesService {
   constructor(
@@ -16,22 +16,22 @@ export class RolesService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
 
-    @InjectRepository(UserRole)
-    private readonly userRoleRepository: Repository<UserRole>,
+    @InjectRepository(Permission)
+    private readonly permissionRepository: Repository<Permission>,
   ) {}
 
-  async createUserRole(roleUser: CreateUserRoleDto) {
+  async createPermission(createPermissionDto: CreatePermissionDto) {
     const user = await this.userRepository.findOne({
-      where: { id: roleUser.userId },
+      where: { id: createPermissionDto.userId },
     });
     const role = await this.roleRepository.findOne({
-      where: { id: roleUser.roleId },
+      where: { id: createPermissionDto.roleId },
     });
 
-    const userRole = this.userRoleRepository.create({
+    const permission = this.permissionRepository.create({
       role,
       user,
     });
-    return this.userRoleRepository.save(userRole);
+    return this.permissionRepository.save(permission);
   }
 }

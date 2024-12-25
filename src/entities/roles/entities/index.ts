@@ -1,2 +1,2 @@
-export { UserRole } from './user_roles.entity';
+export { Permission } from './permission.entity';
 export { Role } from './roles.entity';

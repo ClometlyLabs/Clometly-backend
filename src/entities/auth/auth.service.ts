@@ -10,14 +10,14 @@ import { DataSource, Repository } from 'typeorm';
 import { compare } from 'bcrypt';
 
 import { User } from './entities';
-import { Role, UserRole } from '../roles/entities';
+import { Role, Permission } from '../roles/entities';
 
 import { CreateUserDto, LoginUserDto } from './dto';
 import { CreateProfileDto } from '../profile/dto';
 
 import { validateUserUniqueness, createUser } from './shared/utils/user-utils';
-import { assignUserRole } from '../roles/shared/utils/roles-utils';
-import { generateToken } from './shared/utils/jwt/token-utils';
+import { assignPermission } from '../roles/shared/utils/roles-utils';
+import { generateToken } from './shared/utils/jwt/jwt-utils';
 
 import { ProfileService } from '../profile/profile.service';
 
@@ -28,14 +28,14 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
-    @InjectRepository(UserRole)
-    private readonly userRoleRepository: Repository<UserRole>,
+    @InjectRepository(Permission)
+    private readonly permissionRepository: Repository<Permission>,
 
     private readonly profileService: ProfileService,
     private readonly dataSource: DataSource,
     private readonly jwtService: JwtService,
   ) {}
-  async create(
+  async register(
     createUserDto: CreateUserDto,
     createProfileDto: CreateProfileDto,
   ) {
@@ -52,20 +52,20 @@ export class AuthService {
         queryRunner,
         createUserDto,
       );
-      await this.profileService.createProfile(
+      const profile = await this.profileService.createProfile(
         queryRunner,
         createProfileDto,
         user,
       );
-      await assignUserRole(
+      await assignPermission(
         this.roleRepository,
-        this.userRoleRepository,
+        this.permissionRepository,
         queryRunner,
         createUserDto.role,
         user,
       );
 
-      const token = generateToken(this.jwtService, user.id, user.email);
+      const token = generateToken(this.jwtService, profile.user.id, profile.id);
       await queryRunner.commitTransaction();
 
       return { user, token };
@@ -80,13 +80,24 @@ export class AuthService {
   async login(loginUserDto: LoginUserDto) {
     const { email, password } = loginUserDto;
 
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: ['profile'],
+    });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
     const valid = await compare(password, user.password);
     if (!valid) throw new ForbiddenException('Contraseña incorrecta');
 
-    const token = generateToken(this.jwtService, user.id, user.email);
+    const token = generateToken(this.jwtService, user.id, user.profile.id);
     return { acces_token: token };
+  }
+
+  async deleteUser(id: string) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+
+    await this.userRepository.softDelete(user);
+    return { message: 'Usuario eliminado' };
   }
 }
