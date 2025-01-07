@@ -68,4 +68,10 @@ export class Profile {
 
   @Column({ type: 'text', nullable: true })
   github_link: string;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  created_at: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updated_at: Date;
 }

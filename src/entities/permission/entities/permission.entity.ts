@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { User } from 'src/entities/auth/entities';
-import { Role } from 'src/entities/roles/entities';
+import { Role } from 'src/entities/role/entities/roles.entity';
 
 @Entity('permissions')
 export class Permission {
@@ -23,5 +23,12 @@ export class Permission {
   role: Role;
 
   @Column({ nullable: true })
-  entity_id: string;
+  @JoinColumn({ name: 'entity_id' })
+  entity: string;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  created_at: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updated_at: Date;
 }

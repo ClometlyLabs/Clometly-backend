@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SeedModule } from './seed/seed.module';
 import { AuthModule } from './entities/auth/auth.module';
 import { ProfileModule } from './entities/profile/profile.module';
-import { RolesModule } from './entities/roles/roles.module';
+import { RoleModule } from './entities/role/role.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -29,7 +29,7 @@ import { PermissionModule } from './entities/permission/permission.module';
     ProfileModule,
     PermissionModule,
     SeedModule,
-    RolesModule,
+    RoleModule,
     EnterpriseModule,
   ],
   controllers: [AppController],

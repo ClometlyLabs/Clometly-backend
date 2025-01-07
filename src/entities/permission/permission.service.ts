@@ -4,18 +4,16 @@ import { NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
 import { User } from 'src/entities/auth/entities';
-import { Role } from '../roles/entities';
+import { Role } from '../role/entities/roles.entity';
 
 import { Permission } from './entities/permission.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class PermissionService {
   constructor(
     @InjectRepository(Permission)
     private readonly permissionRepository: Repository<Permission>,
-    private readonly rolesService: RolesService,
   ) {}
 
   async assignPermission(
@@ -35,7 +33,7 @@ export class PermissionService {
     const permission = permissionRepository.create({
       user,
       role,
-      entity_id: null,
+      entity: null,
     });
 
     await queryRunner.manager.save(permission);
@@ -45,7 +43,7 @@ export class PermissionService {
     const permission = this.permissionRepository.create({
       user,
       role,
-      entity_id,
+      entity: entity_id,
     });
 
     return this.permissionRepository.save(permission);

@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 
 import { User } from './entities';
 
-import { RolesModule } from '../roles/roles.module';
+import { RoleModule } from '../role/role.module';
 import { ProfileModule } from '../profile/profile.module';
 import { PassportModule } from '@nestjs/passport';
 import { PermissionModule } from '../permission/permission.module';
@@ -30,7 +30,7 @@ import { PermissionModule } from '../permission/permission.module';
       },
     }),
     forwardRef(() => ProfileModule),
-    forwardRef(() => RolesModule),
+    forwardRef(() => RoleModule),
     PermissionModule,
     ConfigModule,
   ],

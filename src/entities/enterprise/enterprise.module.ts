@@ -5,7 +5,7 @@ import { AuthModule } from '../auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Enterprise } from './entities/enterprise.entity';
 import { PermissionModule } from '../permission/permission.module';
-import { RolesModule } from '../roles/roles.module';
+import { RoleModule } from '../role/role.module';
 
 @Module({
   controllers: [EnterpriseController],
@@ -13,7 +13,7 @@ import { RolesModule } from '../roles/roles.module';
   imports: [
     TypeOrmModule.forFeature([Enterprise]),
     AuthModule,
-    RolesModule,
+    RoleModule,
     PermissionModule,
   ],
 })

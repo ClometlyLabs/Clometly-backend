@@ -10,7 +10,8 @@ import { DataSource, Repository } from 'typeorm';
 import { compare } from 'bcrypt';
 
 import { User } from './entities';
-import { Role } from '../roles/entities';
+import { Role } from '../role/entities/roles.entity';
+
 import { Permission } from '../permission/entities/permission.entity';
 
 import { CreateUserDto, LoginUserDto } from './dto';

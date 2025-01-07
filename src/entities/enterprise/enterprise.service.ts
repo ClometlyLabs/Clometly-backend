@@ -7,7 +7,7 @@ import { CreateEnterpriseDto } from './dto/create-enterprise.dto';
 import { Enterprise } from './entities/enterprise.entity';
 import { User } from '../auth/entities';
 import { PermissionService } from '../permission/permission.service';
-import { RolesService } from '../roles/roles.service';
+import { RoleService } from '../role/role.service';
 
 @Injectable()
 export class EnterpriseService {
@@ -19,7 +19,7 @@ export class EnterpriseService {
     private readonly userRepository: Repository<User>,
 
     private readonly permissionService: PermissionService,
-    private readonly rolesService: RolesService,
+    private readonly rolesService: RoleService,
   ) {}
 
   async create(createEnterpriseDto: CreateEnterpriseDto, userId: string) {

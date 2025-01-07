@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { roles } from 'src/entities/roles/data/roles';
-import { Role } from 'src/entities/roles/entities/roles.entity';
+import { roles } from 'src/entities/role/data/roles';
+import { Role } from 'src/entities/role/entities/roles.entity';
 @Injectable()
 export class SeedService {
   constructor(

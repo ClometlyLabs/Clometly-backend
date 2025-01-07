@@ -30,7 +30,6 @@ export class Enterprise {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
 
-  //A user can have many enterprises, but an enterprise can only have one user, so we use a ManyToOne relationship
   @ManyToOne(() => User, (user) => user.enterprises)
   user: User;
 }
