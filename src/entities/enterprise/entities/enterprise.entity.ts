@@ -1,34 +1,36 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { User } from 'src/entities/auth/entities';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'enterprise' })
 export class Enterprise {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   address: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   phone: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   email: string;
-
-  @Column()
-  cnpj: string;
 
   @Column()
   responsible: string;
 
-  @Column()
+  @Column({ type: 'boolean' })
   status: boolean;
 
-  @Column()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
-  @Column()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
+
+  //A user can have many enterprises, but an enterprise can only have one user, so we use a ManyToOne relationship
+  @ManyToOne(() => User, (user) => user.enterprises)
+  user: User;
 }

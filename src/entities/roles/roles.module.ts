@@ -5,7 +5,8 @@ import { RolesService } from './roles.service';
 import { RolesController } from './roles.controller';
 
 import { Role } from './entities/roles.entity';
-import { Permission } from './entities/permission.entity';
+import { Permission } from '../permission/entities/permission.entity';
+
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
@@ -15,6 +16,6 @@ import { AuthModule } from '../auth/auth.module';
     TypeOrmModule.forFeature([Role, Permission]),
     forwardRef(() => AuthModule),
   ],
-  exports: [TypeOrmModule],
+  exports: [RolesService, TypeOrmModule],
 })
 export class RolesModule {}

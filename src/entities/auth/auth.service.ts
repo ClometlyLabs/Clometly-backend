@@ -10,16 +10,17 @@ import { DataSource, Repository } from 'typeorm';
 import { compare } from 'bcrypt';
 
 import { User } from './entities';
-import { Role, Permission } from '../roles/entities';
+import { Role } from '../roles/entities';
+import { Permission } from '../permission/entities/permission.entity';
 
 import { CreateUserDto, LoginUserDto } from './dto';
 import { CreateProfileDto } from '../profile/dto';
 
 import { validateUserUniqueness, createUser } from './shared/utils/user-utils';
-import { assignPermission } from '../roles/shared/utils/roles-utils';
 import { generateToken } from './shared/utils/jwt/jwt-utils';
 
 import { ProfileService } from '../profile/profile.service';
+import { PermissionService } from '../permission/permission.service';
 
 @Injectable()
 export class AuthService {
@@ -32,6 +33,7 @@ export class AuthService {
     private readonly permissionRepository: Repository<Permission>,
 
     private readonly profileService: ProfileService,
+    private readonly permissionService: PermissionService,
     private readonly dataSource: DataSource,
     private readonly jwtService: JwtService,
   ) {}
@@ -57,7 +59,7 @@ export class AuthService {
         createProfileDto,
         user,
       );
-      await assignPermission(
+      await this.permissionService.assignPermission(
         this.roleRepository,
         this.permissionRepository,
         queryRunner,

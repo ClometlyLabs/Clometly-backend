@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
+
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -17,13 +18,18 @@ export class AuthGuard implements CanActivate {
     if (!token) throw new UnauthorizedException('Token no proporcionado');
 
     try {
+      // Decodifica y verifica el token
       const payload = this.jwtService.verify(token);
-      request.user = payload;
+
+      // Agrega los datos decodificados al objeto request
+      request.user = {
+        userId: payload.userId,
+        profileId: payload.profileId,
+      };
     } catch (error) {
       throw new UnauthorizedException('Token inválido o expirado');
     }
-
-    // Si el token es válido, permite el acceso
+    // Permite el acceso si todo está en orden
     return true;
   }
 
@@ -31,7 +37,7 @@ export class AuthGuard implements CanActivate {
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
-
-    return authHeader.split(' ')[1]; // Extrae el token después de 'Bearer'
+    // Extrae el token después de 'Bearer'
+    return authHeader.split(' ')[1];
   }
 }

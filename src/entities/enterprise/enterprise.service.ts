@@ -1,26 +1,43 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateEnterpriseDto } from './dto/create-enterprise.dto';
-import { UpdateEnterpriseDto } from './dto/update-enterprise.dto';
+import { Enterprise } from './entities/enterprise.entity';
+import { User } from '../auth/entities';
+import { PermissionService } from '../permission/permission.service';
+import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class EnterpriseService {
-  create(createEnterpriseDto: CreateEnterpriseDto) {
-    return 'This action adds a new enterprise';
-  }
+  constructor(
+    @InjectRepository(Enterprise)
+    private readonly enterpriseRepository: Repository<Enterprise>,
 
-  findAll() {
-    return `This action returns all enterprise`;
-  }
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
 
-  findOne(id: number) {
-    return `This action returns a #${id} enterprise`;
-  }
+    private readonly permissionService: PermissionService,
+    private readonly rolesService: RolesService,
+  ) {}
 
-  update(id: number, updateEnterpriseDto: UpdateEnterpriseDto) {
-    return `This action updates a #${id} enterprise`;
-  }
+  async create(createEnterpriseDto: CreateEnterpriseDto, userId: string) {
+    const enterprise = this.enterpriseRepository.create({
+      ...createEnterpriseDto,
+      user: { id: userId },
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} enterprise`;
+    const savedEnterprise = await this.enterpriseRepository.save(enterprise);
+
+    const role = await this.rolesService.getRole('ADMIN', 'enterprise');
+
+    await this.permissionService.createPermission({
+      user: userId,
+      role,
+      entity_id: savedEnterprise.id,
+    });
+
+    return savedEnterprise;
   }
 }

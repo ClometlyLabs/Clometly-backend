@@ -1,5 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  OneToMany,
+} from 'typeorm';
 import { Profile } from 'src/entities/profile/entities/profile.entity';
+import { Enterprise } from 'src/entities/enterprise/entities/enterprise.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -26,4 +33,7 @@ export class User {
 
   @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;
+
+  @OneToMany(() => Enterprise, (enterprise) => enterprise.user)
+  enterprises: Enterprise[];
 }

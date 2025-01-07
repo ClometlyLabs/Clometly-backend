@@ -9,6 +9,8 @@ import { RolesModule } from './entities/roles/roles.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { EnterpriseModule } from './entities/enterprise/enterprise.module';
+import { PermissionModule } from './entities/permission/permission.module';
 
 @Module({
   imports: [
@@ -25,8 +27,10 @@ import { AppService } from './app.service';
     }),
     AuthModule,
     ProfileModule,
+    PermissionModule,
     SeedModule,
     RolesModule,
+    EnterpriseModule,
   ],
   controllers: [AppController],
   providers: [AppService],

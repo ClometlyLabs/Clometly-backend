@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { User } from 'src/entities/auth/entities';
-import { Role } from './roles.entity';
+import { Role } from 'src/entities/roles/entities';
 
 @Entity('permissions')
 export class Permission {

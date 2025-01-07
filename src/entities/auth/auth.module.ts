@@ -1,15 +1,17 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 
-import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
 
 import { User } from './entities';
-import { ProfileModule } from '../profile/profile.module';
+
 import { RolesModule } from '../roles/roles.module';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ProfileModule } from '../profile/profile.module';
 import { PassportModule } from '@nestjs/passport';
+import { PermissionModule } from '../permission/permission.module';
 
 @Module({
   imports: [
@@ -29,10 +31,11 @@ import { PassportModule } from '@nestjs/passport';
     }),
     forwardRef(() => ProfileModule),
     forwardRef(() => RolesModule),
+    PermissionModule,
     ConfigModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, JwtModule],
 })
 export class AuthModule {}
