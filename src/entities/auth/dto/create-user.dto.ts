@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsString,
   MaxLength,
+  MinLength,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -26,6 +27,7 @@ export class CreateUserDto {
   role: string;
 
   @IsNotEmpty({ message: 'La contraseña es obligatoria' })
+  @MinLength(6, { message: 'La contraseña debe ser de minimo 6 digitos' })
   @MaxLength(20, { message: 'La contraseña es de maximo de 20 digitos' })
   password: string;
 }
