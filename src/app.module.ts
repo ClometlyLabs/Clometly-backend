@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServerStaticModule } from '@nestjs/serve-static';
 
 import { SeedModule } from './seed/seed.module';
 import { AuthModule } from './entities/auth/auth.module';
 import { ProfileModule } from './entities/profile/profile.module';
-import { RoleModule } from './entities/role/role.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EnterpriseModule } from './entities/enterprise/enterprise.module';
 import { PermissionModule } from './entities/permission/permission.module';
+import { FileModule } from './entities/file/file.module';
 
 @Module({
   imports: [
@@ -29,8 +30,12 @@ import { PermissionModule } from './entities/permission/permission.module';
     ProfileModule,
     PermissionModule,
     SeedModule,
-    RoleModule,
     EnterpriseModule,
+    FileModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'), // Ruta de la carpeta de archivos
+      serveRoot: '/uploads', // Prefijo para las URLs
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
