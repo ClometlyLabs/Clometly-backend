@@ -1,22 +1,20 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
 
-import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
 
-import { User } from './entities';
-
-import { RoleModule } from '../role/role.module';
+import { User } from './entities/user.entity';
 import { ProfileModule } from '../profile/profile.module';
-import { PassportModule } from '@nestjs/passport';
-import { PermissionModule } from '../permission/permission.module';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
+  controllers: [AuthController],
+  providers: [AuthService],
   imports: [
     TypeOrmModule.forFeature([User]),
-    PassportModule,
+    forwardRef(() => ProfileModule),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -29,13 +27,7 @@ import { PermissionModule } from '../permission/permission.module';
         };
       },
     }),
-    forwardRef(() => ProfileModule),
-    forwardRef(() => RoleModule),
-    PermissionModule,
     ConfigModule,
   ],
-  controllers: [AuthController],
-  providers: [AuthService],
-  exports: [TypeOrmModule, JwtModule],
 })
 export class AuthModule {}

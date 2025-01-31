@@ -7,3 +7,7 @@ export function generateToken(
 ): string {
   return jwtService.sign({ userId, profileId });
 }
+
+export function verifyToken(jwtService: JwtService, token: string): any {
+  return jwtService.verify(token);
+}

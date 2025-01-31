@@ -5,8 +5,8 @@ import {
   OneToOne,
   OneToMany,
 } from 'typeorm';
+
 import { Profile } from 'src/entities/profile/entities/profile.entity';
-import { Enterprise } from 'src/entities/enterprise/entities/enterprise.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -33,9 +33,6 @@ export class User {
 
   @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;
-
-  @OneToMany(() => Enterprise, (enterprise) => enterprise.user)
-  enterprises: Enterprise[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

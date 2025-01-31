@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { IsAdult } from '../validators/isAdult.validator';
+import { IsAdult } from '../validators/isAdult';
 
 export class CreateProfileDto {
   @IsNotEmpty({ message: 'Ingrese su nombre/s' })
@@ -31,29 +31,9 @@ export class CreateProfileDto {
   description?: string;
 
   @IsNotEmpty({ message: 'Ingrese su número de teléfono' })
-  phone?: string;
+  phone: string;
 
   @IsOptional()
   @IsBoolean()
   private?: boolean;
-
-  @IsOptional()
-  @IsString()
-  instagram_link?: string;
-
-  @IsOptional()
-  @IsString()
-  facebook_link?: string;
-
-  @IsOptional()
-  @IsString()
-  twitter_link?: string;
-
-  @IsOptional()
-  @IsString()
-  linkedin_link?: string;
-
-  @IsOptional()
-  @IsString()
-  github_link?: string;
 }

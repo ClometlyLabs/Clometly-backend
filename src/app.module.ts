@@ -1,17 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ServerStaticModule } from '@nestjs/serve-static';
-
-import { SeedModule } from './seed/seed.module';
-import { AuthModule } from './entities/auth/auth.module';
-import { ProfileModule } from './entities/profile/profile.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { EnterpriseModule } from './entities/enterprise/enterprise.module';
-import { PermissionModule } from './entities/permission/permission.module';
-import { FileModule } from './entities/file/file.module';
+
+import { AuthModule } from './entities/auth/auth.module';
+import { ProfileModule } from './entities/profile/profile.module';
 
 @Module({
   imports: [
@@ -19,7 +14,7 @@ import { FileModule } from './entities/file/file.module';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
-      port: +process.env.DB_PORT,
+      port: parseInt(process.env.DB_PORT || '5432'),
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
@@ -28,14 +23,6 @@ import { FileModule } from './entities/file/file.module';
     }),
     AuthModule,
     ProfileModule,
-    PermissionModule,
-    SeedModule,
-    EnterpriseModule,
-    FileModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads'), // Ruta de la carpeta de archivos
-      serveRoot: '/uploads', // Prefijo para las URLs
-    }),
   ],
   controllers: [AppController],
   providers: [AppService],

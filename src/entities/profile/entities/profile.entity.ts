@@ -5,16 +5,16 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { User } from 'src/entities/auth/entities/user.entity';
 
+import { User } from 'src/entities/auth/entities/user.entity';
 @Entity({ name: 'users_profiles' })
 export class Profile {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
   @OneToOne(() => User, (user) => user.profile)
   @JoinColumn()
   user: User;
+
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ type: 'text' })
   first_names: string;
@@ -53,21 +53,6 @@ export class Profile {
       'https://www.beautylabinternational.com/wp-content/uploads/2020/03/Hero-Banner-Placeholder-Light-1024x480-1.png',
   })
   banner_pic: string;
-
-  @Column({ type: 'text', nullable: true })
-  instagram_link: string;
-
-  @Column({ type: 'text', nullable: true })
-  facebook_link: string;
-
-  @Column({ type: 'text', nullable: true })
-  twitter_link: string;
-
-  @Column({ type: 'text', nullable: true })
-  linkedin_link: string;
-
-  @Column({ type: 'text', nullable: true })
-  github_link: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

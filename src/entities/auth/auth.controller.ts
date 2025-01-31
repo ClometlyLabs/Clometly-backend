@@ -1,18 +1,9 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  HttpCode,
-  Param,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 
-import { CreateUserDto, LoginUserDto } from './dto';
-import { CreateProfileDto } from '../profile/dto';
-import { AuthGuard } from './guards/auth.guard';
+import { normalizeEmail } from './utils';
+
+import { AuthService } from './auth.service';
+import { CreateUserDto, CreateProfileDto, LoginUserDto } from './dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,29 +14,13 @@ export class AuthController {
     @Body() createUserDto: CreateUserDto,
     @Body() createProfileDto: CreateProfileDto,
   ) {
-    return await this.authService.register(createUserDto, createProfileDto);
+    return await this.authService.registerUser(createUserDto, createProfileDto);
   }
 
   @Post('signin')
   @HttpCode(200)
-  async login(@Body() loginUserDto: LoginUserDto) {
-    return await this.authService.login(loginUserDto);
-  }
-
-  @Get('users')
-  @UseGuards(AuthGuard)
-  async getUsers(@Req() req: Request) {
-    return { message: 'Ruta protegida' };
-  }
-
-  @Post('users/:id')
-  async deleteUser(@Param('id') id: string) {
-    return this.authService.deleteUser(id);
-  }
-
-  @Get('profile')
-  @UseGuards(AuthGuard)
-  async getProfile(@Req() req: any) {
-    return { message: 'Ruta protegida', user: req.user };
+  async login(@Body() loginDto: LoginUserDto) {
+    const email = normalizeEmail(loginDto.email);
+    return await this.authService.loginUser({ ...loginDto, email });
   }
 }
