@@ -36,7 +36,7 @@ export class AuthService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async existsUser(username: string, email: string): Promise<boolean> {
+  async userExists(email: string, username: string): Promise<boolean> {
     const user = await this.userRepository.findOne({
       where: { username, email },
     });
@@ -45,7 +45,7 @@ export class AuthService {
   async createUser(userDto: CreateUserDto, queryRunner: any): Promise<User> {
     const { username, email, password } = userDto;
 
-    const exists = await this.existsUser(username, email);
+    const exists = await this.userExists(email, username);
     if (exists) throw new BadRequestException('El usuario ya existe.');
 
     const user = this.userRepository.create({
@@ -57,14 +57,14 @@ export class AuthService {
 
     return queryRunner.manager.save(user);
   }
-  async registerUser(userDto: CreateUserDto, profileDto: CreateProfileDto) {
+  async registerAccount(userDto: CreateUserDto, profileDto: CreateProfileDto) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
       const { email, username } = userDto;
-      await this.existsUser(email, username);
+      await this.userExists(email, username);
 
       const user = await this.createUser(userDto, queryRunner);
 
@@ -99,5 +99,15 @@ export class AuthService {
     const token = generateToken(this.jwtService, user.id, user.profile.id);
 
     return { acces_token: token };
+  }
+  async getUser(id: string) {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['profile'],
+    });
+
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+
+    return user;
   }
 }

@@ -4,9 +4,12 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { User } from 'src/entities/auth/entities/user.entity';
+import { Post } from 'src/entities/post/entities/post.entity';
+
 @Entity({ name: 'users_profiles' })
 export class Profile {
   @OneToOne(() => User, (user) => user.profile)
@@ -53,6 +56,9 @@ export class Profile {
       'https://www.beautylabinternational.com/wp-content/uploads/2020/03/Hero-Banner-Placeholder-Light-1024x480-1.png',
   })
   banner_pic: string;
+
+  @OneToMany(() => Post, (post) => post.author)
+  posts: Post[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

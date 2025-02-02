@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 
 import { AuthModule } from './entities/auth/auth.module';
 import { ProfileModule } from './entities/profile/profile.module';
+import { PostModule } from './entities/post/post.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ProfileModule } from './entities/profile/profile.module';
     }),
     AuthModule,
     ProfileModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [AppService],
