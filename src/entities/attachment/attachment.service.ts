@@ -43,7 +43,7 @@ export class AttachmentService {
       attachment.file_url.split('/uploads/')[1],
     );
     if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath); // Eliminar archivo físico
+      fs.unlinkSync(filePath);
     }
 
     await this.attachmentRepository.delete(id);
