@@ -8,7 +8,7 @@ import * as path from 'path';
 
 @Injectable()
 export class AttachmentService {
-  private uploadDir = path.join(__dirname, '..', '..', '..', 'uploads'); // Carpeta de subida
+  private uploadDir = path.join(__dirname, '..', '..', '..', 'uploads');
 
   constructor(
     @InjectRepository(Attachment)
@@ -24,8 +24,8 @@ export class AttachmentService {
         : 'Document';
 
     const attachment = this.attachmentRepository.create({
-      file_url: fileUrl,
-      file_type: fileType,
+      url: fileUrl,
+      type: fileType,
       post: { id: postId },
     });
 
@@ -40,7 +40,7 @@ export class AttachmentService {
 
     const filePath = path.join(
       this.uploadDir,
-      attachment.file_url.split('/uploads/')[1],
+      attachment.url.split('/uploads/')[1],
     );
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);

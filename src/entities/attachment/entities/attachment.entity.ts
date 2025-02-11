@@ -13,10 +13,10 @@ export class Attachment {
   id: string;
 
   @Column()
-  file_url: string; // Ruta del archivo en el servidor
+  url: string;
 
   @Column({ type: 'enum', enum: ['Image', 'Video', 'Document'] })
-  file_type: 'Image' | 'Video' | 'Document';
+  type: 'Image' | 'Video' | 'Document';
 
   @ManyToOne(() => Post, (post) => post.attachments, { onDelete: 'CASCADE' })
   post: Post;

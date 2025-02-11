@@ -17,9 +17,6 @@ export class Post {
   id: string;
 
   @Column({ type: 'text' })
-  title: string;
-
-  @Column({ type: 'text' })
   content: string;
 
   @ManyToOne(() => Profile, (profile) => profile.posts)

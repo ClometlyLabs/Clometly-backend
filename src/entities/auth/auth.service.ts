@@ -37,9 +37,13 @@ export class AuthService {
   ) {}
 
   async userExists(email: string, username: string): Promise<boolean> {
+    console.log(`Buscando usuario con email: ${email} y username: ${username}`);
+
     const user = await this.userRepository.findOne({
-      where: { username, email },
+      where: [{ email }, { username }],
     });
+
+    console.log(`Usuario encontrado: ${user ? 'Yes' : 'No'}`);
     return !!user;
   }
   async createUser(userDto: CreateUserDto, queryRunner: any): Promise<User> {
@@ -47,7 +51,7 @@ export class AuthService {
 
     const exists = await this.userExists(email, username);
     if (exists) throw new BadRequestException('El usuario ya existe.');
-
+    console.log(exists);
     const user = this.userRepository.create({
       ...userDto,
       email: normalizeEmail(email),
