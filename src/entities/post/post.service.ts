@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -17,6 +21,9 @@ export class PostService {
 
     @InjectRepository(Attachment)
     private readonly attachmentRepository: Repository<Attachment>,
+
+    @InjectRepository(Profile)
+    private readonly profileRepository: Repository<Profile>,
   ) {}
 
   async createPost(
@@ -33,5 +40,19 @@ export class PostService {
     });
 
     return await this.postRepository.save(post);
+  }
+
+  async deletePost(id: string, profileId: string) {
+    const post = await this.postRepository.findOne({
+      where: { id },
+      relations: ['author'],
+    });
+    if (!post) throw new NotFoundException('No se encontró la publicación.');
+
+    if (post.author.id != profileId)
+      throw new ForbiddenException('No tienes permitido esta acción.');
+
+    await this.postRepository.delete(id);
+    return 'Publicación eliminada correctamente.';
   }
 }

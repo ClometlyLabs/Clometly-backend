@@ -1,12 +1,15 @@
 import {
+  Get,
   Body,
   Post,
+  Param,
+  Delete,
   Request,
   UseGuards,
   Controller,
   UploadedFiles,
   UseInterceptors,
-  Get,
+  BadRequestException,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
@@ -21,8 +24,8 @@ import { AttachmentInterface } from './interface/media.interface';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @UseGuards(AuthGuard)
   @Post()
+  @UseGuards(AuthGuard)
   @UseInterceptors(
     FilesInterceptor('files', 5, {
       storage: diskStorage({
@@ -30,7 +33,7 @@ export class PostController {
           if (file.mimetype.startsWith('image/')) {
             cb(null, './uploads/images');
           } else if (file.mimetype.startsWith('video/')) {
-            cb(null, './upload/videos');
+            cb(null, './uploads/videos');
           } else {
             cb(new Error('Only images and videos are allowed'), '');
           }
@@ -67,11 +70,23 @@ export class PostController {
       type: file.mimetype.startsWith('image/') ? 'Image' : 'Video',
     }));
 
+    if (!content && (!files || files.length === 0)) {
+      throw new BadRequestException(
+        'Debe proporcionar contenido de texto o al menos un archivo.',
+      );
+    }
+
     return await this.postService.createPost(
       req.user.profileId,
       content,
       mediaFiles,
     );
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  async removePost(@Request() req, @Param('id') id: string) {
+    return await this.postService.deletePost(id, req.user.profileId);
   }
 
   @Get('test')

@@ -1,12 +1,21 @@
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsArray,
+  IsOptional,
+  IsNotEmpty,
+  MaxLength,
+} from 'class-validator';
+import { AttachmentInterface } from '../interface/media.interface';
 
 export class CreatePostDto {
-  @IsNotEmpty({ message: 'Ingrese un titulo.' })
-  title: string;
-
-  @IsNotEmpty({ message: 'Escribe algo para publicar.' })
+  @IsString()
+  @IsNotEmpty({ message: 'Escribe algo para hacer una publicación' })
   content: string;
 
+  @IsArray()
   @IsOptional()
-  files?: Express.Multer.File[];
+  @MaxLength(5, {
+    message: 'Solo puedes subir hasta 5 archivos por publicación',
+  })
+  attachments?: AttachmentInterface[];
 }
