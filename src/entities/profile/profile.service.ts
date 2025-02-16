@@ -33,6 +33,18 @@ export class ProfileService {
     return queryRunner.manager.save(profile);
   }
 
+  async uploadProfileImage(profileId: string, image: string) {
+    const profile = await this.profileRepository.findOne({
+      where: { id: profileId },
+    });
+    if (!profile) throw new NotFoundException('Perfil no encontrado.');
+
+    profile.profile_pic = image;
+    await this.profileRepository.save(profile);
+
+    return 'Imagen de perfil actualizada correctamente.';
+  }
+
   async getProfile(username: string) {
     const user = await this.userRepository.findOne({
       where: { username },
