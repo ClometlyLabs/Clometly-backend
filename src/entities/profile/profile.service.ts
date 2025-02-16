@@ -7,8 +7,8 @@ import { CreateProfileDto } from './dto/create-profile.dto';
 //entities
 import { Profile } from './entities/profile.entity';
 import { User } from '../auth/entities/user.entity';
-import { NotFoundError } from 'rxjs';
 import { NotFoundException } from '@nestjs/common';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 export class ProfileService {
   constructor(
@@ -43,6 +43,18 @@ export class ProfileService {
     await this.profileRepository.save(profile);
 
     return 'Imagen de perfil actualizada correctamente.';
+  }
+
+  async updateProfile(profileId: string, updateProfileDto: UpdateProfileDto) {
+    const profile = await this.profileRepository.findOne({
+      where: { id: profileId },
+    });
+    if (!profile) throw new NotFoundException('Perfil no encontrado.');
+
+    Object.assign(profile, updateProfileDto);
+    await this.profileRepository.save(profile);
+
+    return profile;
   }
 
   async getProfile(username: string) {

@@ -17,12 +17,13 @@ import { diskStorage } from 'multer';
 
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { ProfileService } from './profile.service';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
-  @Patch('upload-profile')
+  @Patch('upload-icon')
   @UseGuards(AuthGuard)
   @UseInterceptors(
     FilesInterceptor('image', 1, {
@@ -50,7 +51,7 @@ export class ProfileController {
       },
     }),
   )
-  async uploadProfileImage(
+  async changeProfilePicture(
     @Request() req,
     @UploadedFiles() image: Express.Multer.File,
   ) {
@@ -62,5 +63,12 @@ export class ProfileController {
   @Get(':username')
   async getProfile(@Param('username') username: string) {
     return this.profileService.getProfile(username);
+  }
+
+  @Patch('update-profile')
+  @UseGuards(AuthGuard)
+  async changeProfileInfo(@Request() req, @Body() updateDto: UpdateProfileDto) {
+    const { user } = req;
+    return this.profileService.updateProfile(user.profileId, updateDto);
   }
 }
