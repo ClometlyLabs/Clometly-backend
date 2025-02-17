@@ -1,23 +1,21 @@
 import {
   Get,
+  Body,
   Param,
   Patch,
+  Request,
   UseGuards,
   Controller,
+  UploadedFile,
   UseInterceptors,
   BadRequestException,
-  Request,
-  Body,
-  UploadedFiles,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
-
-import { extname } from 'path';
-import { diskStorage } from 'multer';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { ProfileService } from './profile.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { validateImage, imageUploadOptions } from './utils';
 
 @Controller('profile')
 export class ProfileController {
@@ -25,41 +23,23 @@ export class ProfileController {
 
   @Patch('upload-icon')
   @UseGuards(AuthGuard)
-  @UseInterceptors(
-    FilesInterceptor('image', 1, {
-      storage: diskStorage({
-        destination: (req, file, cb) => {
-          if (!file.mimetype.startsWith('image/')) {
-            cb(new BadRequestException('Only images are allowed'), '');
-          }
-          cb(null, './uploads/images');
-        },
-        filename(req, file, callback) {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          callback(null, uniqueSuffix + extname(file.originalname));
-        },
-      }),
-      fileFilter(req, file, callback) {
-        if (!file.mimetype.startsWith('image/')) {
-          return callback(
-            new BadRequestException('Only images are allowed'),
-            false,
-          );
-        }
-        callback(null, true);
-      },
-    }),
-  )
+  @UseInterceptors(FileInterceptor('image', imageUploadOptions))
   async changeProfilePicture(
     @Request() req,
-    @UploadedFiles() image: Express.Multer.File,
+    @UploadedFile() image: Express.Multer.File,
   ) {
     const { user } = req;
+
     if (!image) throw new BadRequestException('Seleccione una imagen.');
-    const imageUrl = `/uploads/images/${image[0].filename}`;
+
+    const imagePath = `./uploads/images/${image.filename}`;
+
+    await validateImage(imagePath);
+
+    const imageUrl = `/uploads/images/${image.filename}`;
     return this.profileService.uploadProfileImage(user.profileId, imageUrl);
   }
+
   @Get(':username')
   async getProfile(@Param('username') username: string) {
     return this.profileService.getProfile(username);

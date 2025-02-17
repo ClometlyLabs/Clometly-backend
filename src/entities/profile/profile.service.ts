@@ -32,7 +32,6 @@ export class ProfileService {
 
     return queryRunner.manager.save(profile);
   }
-
   async uploadProfileImage(profileId: string, image: string) {
     const profile = await this.profileRepository.findOne({
       where: { id: profileId },
@@ -44,7 +43,6 @@ export class ProfileService {
 
     return 'Imagen de perfil actualizada correctamente.';
   }
-
   async updateProfile(profileId: string, updateProfileDto: UpdateProfileDto) {
     const profile = await this.profileRepository.findOne({
       where: { id: profileId },
@@ -56,7 +54,6 @@ export class ProfileService {
 
     return profile;
   }
-
   async getProfile(username: string) {
     const user = await this.userRepository.findOne({
       where: { username },
