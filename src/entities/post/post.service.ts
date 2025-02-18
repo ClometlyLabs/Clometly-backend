@@ -67,6 +67,7 @@ export class PostService {
         'author.id',
         'author.first_names',
         'author.last_names',
+        'author.profilePic',
         'user.username',
         'attachments',
       ])
