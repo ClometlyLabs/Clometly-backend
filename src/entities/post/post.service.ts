@@ -57,9 +57,20 @@ export class PostService {
   }
 
   async getPosts() {
-    return await this.postRepository.find({
-      relations: ['author', 'attachments'],
-      order: { created_at: 'DESC' },
-    });
+    return await this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.author', 'author')
+      .leftJoinAndSelect('author.user', 'user')
+      .leftJoinAndSelect('post.attachments', 'attachments')
+      .select([
+        'post',
+        'author.id',
+        'author.first_names',
+        'author.last_names',
+        'user.username',
+        'attachments',
+      ])
+      .orderBy('post.created_at', 'DESC')
+      .getMany();
   }
 }
