@@ -55,4 +55,11 @@ export class PostService {
     await this.postRepository.delete(id);
     return 'Publicación eliminada correctamente.';
   }
+
+  async getPosts() {
+    return await this.postRepository.find({
+      relations: ['author', 'attachments'],
+      order: { created_at: 'DESC' },
+    });
+  }
 }

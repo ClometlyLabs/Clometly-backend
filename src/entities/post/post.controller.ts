@@ -13,12 +13,10 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
-import { extname } from 'path';
-import { diskStorage } from 'multer';
-
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { PostService } from './post.service';
 import { AttachmentInterface } from './interface/media.interface';
+import { attachmentConfig } from './utils/files.config';
 
 @Controller('post')
 export class PostController {
@@ -26,38 +24,7 @@ export class PostController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @UseInterceptors(
-    FilesInterceptor('files', 5, {
-      storage: diskStorage({
-        destination: (req, file, cb) => {
-          if (file.mimetype.startsWith('image/')) {
-            cb(null, './uploads/images');
-          } else if (file.mimetype.startsWith('video/')) {
-            cb(null, './uploads/videos');
-          } else {
-            cb(new Error('Only images and videos are allowed'), '');
-          }
-        },
-        filename(req, file, callback) {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          callback(null, uniqueSuffix + extname(file.originalname));
-        },
-      }),
-      fileFilter(req, file, callback) {
-        if (
-          !file.mimetype.startsWith('image/') &&
-          !file.mimetype.startsWith('video/')
-        ) {
-          return callback(
-            new Error('Solo se admiten archivos de fotos y videos.'),
-            false,
-          );
-        }
-        callback(null, true);
-      },
-    }),
-  )
+  @UseInterceptors(FilesInterceptor('files', 5, attachmentConfig))
   async addPost(
     @Request() req,
     @Body('content') content: string,
@@ -87,6 +54,11 @@ export class PostController {
   @UseGuards(AuthGuard)
   async removePost(@Request() req, @Param('id') id: string) {
     return await this.postService.deletePost(id, req.user.profileId);
+  }
+
+  @Get()
+  async getPosts() {
+    return await this.postService.getPosts();
   }
 
   @Get('test')
