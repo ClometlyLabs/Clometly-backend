@@ -9,8 +9,10 @@ export const attachmentConfig = {
         cb(null, './uploads/images');
       } else if (file.mimetype.startsWith('video/')) {
         cb(null, './uploads/videos');
+      } else if (file.mimetype.startsWith('application/')) {
+        cb(null, './uploads/documents');
       } else {
-        cb(new Error('Only images and videos are allowed'), '');
+        cb(new Error('Tipo de archivo no válido'), '');
       }
     },
     filename(req, file, callback) {

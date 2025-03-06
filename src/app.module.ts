@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './entities/auth/auth.module';
 import { ProfileModule } from './entities/profile/profile.module';
 import { PostModule } from './entities/post/post.module';
+import { ClotsModule } from './entities/clots/clots.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PostModule } from './entities/post/post.module';
     AuthModule,
     ProfileModule,
     PostModule,
+    ClotsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -9,6 +9,7 @@ import {
 
 import { User } from 'src/entities/auth/entities/user.entity';
 import { Post } from 'src/entities/post/entities/post.entity';
+import { Clot } from 'src/entities/clots/entities/clot.entity';
 
 @Entity({ name: 'users_profiles' })
 export class Profile {
@@ -59,6 +60,9 @@ export class Profile {
 
   @OneToMany(() => Post, (post) => post.author)
   posts: Post[];
+
+  @OneToMany(() => Clot, (clot) => clot.author)
+  clots: Clot[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

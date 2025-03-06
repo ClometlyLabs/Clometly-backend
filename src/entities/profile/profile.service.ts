@@ -9,6 +9,7 @@ import { Profile } from './entities/profile.entity';
 import { User } from '../auth/entities/user.entity';
 import { NotFoundException } from '@nestjs/common';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { instanceToPlain } from 'class-transformer';
 
 export class ProfileService {
   constructor(
@@ -54,13 +55,13 @@ export class ProfileService {
 
     return profile;
   }
-  async getProfile(username: string) {
+  async getProfile(id: string) {
     const user = await this.userRepository.findOne({
-      where: { username },
+      where: { id },
       relations: ['profile'],
     });
     if (!user) throw new NotFoundException('User no encontrado.');
 
-    return user.profile;
+    return instanceToPlain(user);
   }
 }

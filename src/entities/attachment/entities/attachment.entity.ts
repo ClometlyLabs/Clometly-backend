@@ -7,7 +7,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-@Entity('attachments')
+@Entity('posts_attachments')
 export class Attachment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -21,6 +21,9 @@ export class Attachment {
   @ManyToOne(() => Post, (post) => post.attachments, { onDelete: 'CASCADE' })
   post: Post;
 
-  @CreateDateColumn()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updated_at: Date;
 }

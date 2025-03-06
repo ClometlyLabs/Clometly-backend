@@ -7,12 +7,13 @@ import { Profile } from './entities/profile.entity';
 
 import { AuthModule } from '../auth/auth.module';
 import { User } from '../auth/entities/user.entity';
+import { Clot } from 'src/entities/clots/entities/clot.entity';
 
 @Module({
   controllers: [ProfileController],
   providers: [ProfileService],
   imports: [
-    TypeOrmModule.forFeature([Profile, User]),
+    TypeOrmModule.forFeature([Profile, User, Clot]),
     forwardRef(() => AuthModule),
   ],
   exports: [ProfileService, TypeOrmModule],

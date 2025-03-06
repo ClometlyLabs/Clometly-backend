@@ -40,9 +40,9 @@ export class ProfileController {
     return this.profileService.uploadProfileImage(user.profileId, imageUrl);
   }
 
-  @Get(':username')
-  async getProfile(@Param('username') username: string) {
-    return this.profileService.getProfile(username);
+  @Get(':id')
+  async getProfile(@Param('id') id: string) {
+    return this.profileService.getProfile(id);
   }
 
   @Patch('update-profile')
