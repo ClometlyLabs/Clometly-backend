@@ -61,6 +61,11 @@ export class PostController {
     return await this.postService.getPosts();
   }
 
+  @Get(':profileId')
+  async getPostsByProfile(@Param('profileId') profileId: string) {
+    return await this.postService.getPostsByProfileId(profileId);
+  }
+
   @Get('test')
   async test(@Request() req: any) {
     console.log(req);

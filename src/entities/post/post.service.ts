@@ -72,4 +72,11 @@ export class PostService {
       .orderBy('post.created_at', 'DESC')
       .getMany();
   }
+
+  getPostsByProfileId(profileId: string) {
+    return this.postRepository.find({
+      where: { author: { id: profileId } },
+      relations: ['attachments'],
+    });
+  }
 }

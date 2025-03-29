@@ -51,4 +51,12 @@ export class ProfileController {
     const { user } = req;
     return this.profileService.updateProfile(user.profileId, updateDto);
   }
+ 
+  // Con este metodo podemos obtener el ID del usuario autenticado
+  @Get()
+  @UseGuards(AuthGuard)
+  async getId(@Request() req): Promise<{ userId: string; message: string } | null> {
+    const { user } = req; // Extraes el ID del usuario desde el token
+    return { userId: user.userId, message: 'Información del perfil obtenida correctamente' };
+  }
 }
